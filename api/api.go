@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/kingdemoking/decentralization-storage/settings"
 	"github.com/kingdemoking/decentralization-storage/structs"
+	"github.com/kingdemoking/decentralization-storage/utils"
 )
 
 const (
@@ -21,60 +21,59 @@ const (
 	uploadUrl = settings.BaseURL + "/v1/upload-to-arweave-or-ipfs"
 )
 
-func GetToken(email, pwd string)(response structs.LoginRes) {
+func GetToken(email, pwd string)(response structs.LoginRes, err error) {
 	v := make(url.Values)
 	v.Add("email", email)
 	v.Add("pwd", pwd)
 
-	res, _ := http.PostForm(loginUrl, v)
-	rawData,_ := ioutil.ReadAll(res.Body)
-	json.Unmarshal(rawData, &response)
-	return response
+	res, err := http.PostForm(loginUrl, v)
+	rawData,err := ioutil.ReadAll(res.Body)
+	err = json.Unmarshal(rawData, &response)
+	return response,err
 }
 
 
-func GetAPIKey(token string)(response structs.ApiKeyRes) {
+func GetAPIKey(token string)(response structs.ApiKeyRes, err error) {
 	client := &http.Client{}
 
 	req, err := http.NewRequest("POST", apiKeyUrl, nil)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
 	req.Header.Add("token", token)
 	res, err := client.Do(req)
-	rawData,_ := ioutil.ReadAll(res.Body)
-	json.Unmarshal(rawData, &response)
-	return response
+	rawData,err := ioutil.ReadAll(res.Body)
+	err = json.Unmarshal(rawData, &response)
+	return response,err
 }
 
 
-func Upload(apiKey,to,filePath string)(response structs.UploadRes) {
-	client := &http.Client{
-	}
+func Upload(apiKey, to, filePath string)(response structs.UploadRes, err error) {
+	client := &http.Client{}
+	fileName := utils.GetFileName(filePath)
 	
 	buf := new(bytes.Buffer)
-   writer := multipart.NewWriter(buf)
-	formFile, _ := writer.CreateFormFile("file", "girl1.png")
+    writer := multipart.NewWriter(buf)
+	formFile, err := writer.CreateFormFile("file", fileName)
 	// formFile.Write(fileBytes)
-
 	// 从文件读取数据，写入表单
 	srcFile, err := os.Open(filePath)
 	if err != nil {
-		 log.Fatalf("%Open source file failed: s\n", err)
+		 return
 	}
 	defer srcFile.Close()
 
 	_, err = io.Copy(formFile, srcFile)
 	if err != nil {
-		 log.Fatalf("Write to form file falied: %s\n", err)
+		 return
 	} 
 
 	contentType := writer.FormDataContentType()
 	writer.Close() 
 	req, err := http.NewRequest("POST", uploadUrl, buf)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
 	req.Header.Set("Content-Type", contentType)
@@ -83,9 +82,8 @@ func Upload(apiKey,to,filePath string)(response structs.UploadRes) {
 
 	res, err := client.Do(req)
 	rawData,_ := ioutil.ReadAll(res.Body)
-	json.Unmarshal(rawData, &response)
-
-	return response
+	err = json.Unmarshal(rawData, &response)
+	return response,err
 }
 
 
