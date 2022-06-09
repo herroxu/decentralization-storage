@@ -15,7 +15,7 @@
     )
 
     func main(){
-	    res := utils.GetToken("1055781911@qq.com", "123456")
+	    res := utils.GetToken("105581911@qq.com", "12356")
 	    fmt.Println(res.Token)
     }
    ```
@@ -63,7 +63,7 @@
     )
 
     func main(){
-        apiKey := "GYQ6iysjaTCo0eyvPZx3W3ggva1Ev..."
+       apiKey := "GYQ6iysjaTCo0eyvPZx3W3ggva1Ev..."
 	    to := "ipfs"
 	    filepath := "/home/lucas/girl1.png"
 
