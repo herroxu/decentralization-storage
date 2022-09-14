@@ -69,7 +69,6 @@ func Upload(apiKey, to, filePath string)(response structs.UploadRes, err error) 
     writer := multipart.NewWriter(buf)
 	formFile, err := writer.CreateFormFile("file", fileName)
 	// formFile.Write(fileBytes)
-	// 从文件读取数据，写入表单
 	srcFile, err := os.Open(filePath)
 	if err != nil {
 		 return
@@ -103,26 +102,3 @@ func Upload(apiKey, to, filePath string)(response structs.UploadRes, err error) 
 	err = json.Unmarshal(rawData, &response)
 	return response,err
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

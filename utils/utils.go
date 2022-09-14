@@ -12,6 +12,3 @@ func GetFileName(filePath string)(name string){
 	name = dataArr[length-1]
 	return
 }
-
-
-

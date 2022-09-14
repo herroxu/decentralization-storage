@@ -23,9 +23,6 @@ func Test_Upload(t *testing.T) {
 	to := "ipfs"
 	filepath := "/home/lucas/girl1.png"
 	res,_ := Upload(apiKey, to, filepath)
-	fmt.Println(res.Url)
+	fmt.Println(res.DecentralizedUrl)
 	fmt.Println(res.Msg)
 }
-
-
-
