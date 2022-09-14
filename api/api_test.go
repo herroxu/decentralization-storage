@@ -26,6 +26,3 @@ func Test_Upload(t *testing.T) {
 	fmt.Println(res.Url)
 	fmt.Println(res.Msg)
 }
-
-
-
