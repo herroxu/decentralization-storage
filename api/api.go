@@ -27,7 +27,13 @@ func GetToken(email, pwd string)(response structs.LoginRes, err error) {
 	v.Add("pwd", pwd)
 
 	res, err := http.PostForm(loginUrl, v)
+	if err != nil {
+		return
+   	} 
 	rawData,err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+   	} 
 	err = json.Unmarshal(rawData, &response)
 	return response,err
 }
@@ -43,7 +49,13 @@ func GetAPIKey(token string)(response structs.ApiKeyRes, err error) {
 
 	req.Header.Add("token", token)
 	res, err := client.Do(req)
+	if err != nil {
+		return
+   	} 
 	rawData,err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+   	} 
 	err = json.Unmarshal(rawData, &response)
 	return response,err
 }
@@ -81,7 +93,13 @@ func Upload(apiKey, to, filePath string)(response structs.UploadRes, err error) 
 	req.Header.Set("AuthKey", apiKey)
 
 	res, err := client.Do(req)
-	rawData,_ := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+	rawData,err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return 
+	}
 	err = json.Unmarshal(rawData, &response)
 	return response,err
 }
